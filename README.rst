@@ -1,9 +1,8 @@
 isoparser
 =========
 
-This python library can parse the `ISO 9660`_ disk image format including
-`Rock Ridge`_ extensions. It can load ISOs from the local filesystem or via
-HTTP, and will only read and cache sectors as necessary. You list directory
+This is based on python library can parse the `ISO 9660`_ disk image format including
+`Rock Ridge`_ extensions. It can load ISOs from the local filesystem. You list directory
 contents, extract files, and retrieve metadata.
 
 UNMAINTAINED
@@ -13,26 +12,21 @@ This package is unmaintained. The author now maintains the pathlab_ package,
 which includes support for ISO 9660 and Rock Ridge. The pycdlib_ package
 may also be of interest if you need Joliet / UDF support.
 
-Installation
-------------
-
-.. code-block:: console
-
-    $ pip install isoparser
-
 Usage
 -----
 
-.. code-block:: python
+dotnet fsi
 
-    import isoparser
+#load "iso9660.fsx"
+open Iso9660
 
-    iso = isoparser.parse("http://www.microsoft.com/linux.iso")
+let iso = parse "/path/to/image.iso"
+printfn "Volume: %s" iso.Root.Name
+let kids = iso.Root.Children |> List.map (fun r -> r.Name, r.IsDirectory)
+printfn "Children: %A" kids
 
-    print iso.record("boot", "grub").children
-    print iso.record("boot", "grub", "grub.cfg").content
+let fileRec = iso.Record("DIR", "README.TXT")  // or iso.Record("README.TXT")
+let content = fileRec.Content |> System.Text.Encoding.ASCII.GetString
+printfn "Content preview: %s" (content.Substring(0, min 200 content.Length))
 
-.. _`ISO 9660`: https://en.wikipedia.org/wiki/ISO_9660
-.. _`Rock Ridge`: https://en.wikipedia.org/wiki/Rock_Ridge
-.. _`pathlab`: https://github.com/barneygale/pathlab
-.. _`pycdlib`: https://github.com/clalancette/pycdlib
+iso.Close()
