@@ -22,12 +22,17 @@ dotnet fsi
 open Iso9660
 
 let iso = parse "/path/to/image.iso"
+
 printfn "Volume: %s" iso.Root.Name
+
 let kids = iso.Root.Children |> List.map (fun r -> r.Name, r.IsDirectory)
+
 printfn "Children: %A" kids
 
 let fileRec = iso.Record("DIR", "README.TXT")  // or iso.Record("README.TXT")
+
 let content = fileRec.Content |> System.Text.Encoding.ASCII.GetString
+
 printfn "Content preview: %s" (content.Substring(0, min 200 content.Length))
 
 iso.Close()
